@@ -1,3 +1,7 @@
 :host {
   display: block;
 }
+
+ion-split-pane {
+  top: 56px;
+}

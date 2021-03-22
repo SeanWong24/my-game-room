@@ -19,22 +19,34 @@ export class AppWaitingZone implements ComponentInterface {
               <ion-back-button default-href="/"></ion-back-button>
             </ion-buttons>
             <ion-title>{this.roomName}</ion-title>
+            <ion-buttons slot="end">
+              <ion-menu-toggle>
+                <ion-button title="Player List">
+                  <ion-icon slot="icon-only" name="people"></ion-icon>
+                </ion-button>
+              </ion-menu-toggle>
+            </ion-buttons>
           </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
-          <ion-list>
-            {
-              state.players?.map(({ name, isHost }, index) => (
-                <ion-item>
-                  <ion-label>{`${name}${isHost ? ' (Host)' : ''}`}</ion-label>
-                  {isHost && <ion-badge color="secondary">Host</ion-badge>}
-                  <ion-badge color="primary">{index + 1}</ion-badge>
-                </ion-item>
-              ))
-            }
-          </ion-list>
-        </ion-content>
+        <ion-split-pane contentId="chat-pane">
+          <ion-menu side="end" contentId="chat-pane">
+            <ion-list>
+              {
+                state.players?.map(({ name, isHost }, index) => (
+                  <ion-item>
+                    <ion-badge slot="start" color="primary">{index + 1}</ion-badge>
+                    <ion-label>{`${name}${isHost ? ' (Host)' : ''}`}</ion-label>
+                    {isHost && <ion-badge color="secondary">Host</ion-badge>}
+                  </ion-item>
+                ))
+              }
+            </ion-list>
+          </ion-menu>
+          <ion-content id="chat-pane" class="ion-padding">
+            Chat pane
+          </ion-content>
+        </ion-split-pane>
       </Host>
     );
   }
