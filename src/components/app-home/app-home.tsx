@@ -36,11 +36,11 @@ export class AppHome implements ComponentInterface {
           </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
+        <ion-content class="ion-padding" scrollY={false}>
           <ion-grid>
             <ion-row>
               <ion-col></ion-col>
-              <ion-col size="auto">
+              <ion-col size="12" sizeSm="8" sizeMd="6" sizeLg="4" sizeXl="3">
                 {this.renderMainContent()}
               </ion-col>
               <ion-col></ion-col>
