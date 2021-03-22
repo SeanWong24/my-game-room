@@ -37,7 +37,7 @@ export class AppHome {
           <ion-toolbar color="primary">
             <ion-title>My Game Room</ion-title>
           </ion-toolbar>
-        </ion-header>,
+        </ion-header>
 
         <ion-content class="ion-padding">
           <ion-grid>
