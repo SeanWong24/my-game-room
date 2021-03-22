@@ -11,6 +11,7 @@ export class AppRoot {
       <ion-app>
         <ion-router useHash={true}>
           <ion-route url="/" component="app-home" />
+          <ion-route url="/room/:roomName" component="app-waiting-zone" />
         </ion-router>
         <ion-nav />
       </ion-app>

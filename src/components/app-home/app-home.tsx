@@ -106,12 +106,15 @@ export class AppHome {
       id => {
         console.log('Peer opened.')
         this.peerId = id;
-        if (!this.isHost) {
+        if (this.isHost) {
+          this.navigateToWaitingZone();
+        } else {
           const connection = this.peer.connect(this.hostId, { label: this.playerName });
           connection.on(
             'open',
             () => {
               console.log('connection opend.');
+              this.navigateToWaitingZone();
             }
           );
           connection.on('error', (error) => {
@@ -182,6 +185,11 @@ export class AppHome {
           }
         }
     }
+  }
+
+  private navigateToWaitingZone() {
+    const router = document.querySelector('ion-router');
+    router.push(`/room/${this.roomName}`);
   }
 
 }

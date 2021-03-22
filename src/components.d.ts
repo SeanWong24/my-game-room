@@ -10,6 +10,9 @@ export namespace Components {
     }
     interface AppRoot {
     }
+    interface AppWaitingZone {
+        "roomName": string;
+    }
 }
 declare global {
     interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
@@ -24,9 +27,16 @@ declare global {
         prototype: HTMLAppRootElement;
         new (): HTMLAppRootElement;
     };
+    interface HTMLAppWaitingZoneElement extends Components.AppWaitingZone, HTMLStencilElement {
+    }
+    var HTMLAppWaitingZoneElement: {
+        prototype: HTMLAppWaitingZoneElement;
+        new (): HTMLAppWaitingZoneElement;
+    };
     interface HTMLElementTagNameMap {
         "app-home": HTMLAppHomeElement;
         "app-root": HTMLAppRootElement;
+        "app-waiting-zone": HTMLAppWaitingZoneElement;
     }
 }
 declare namespace LocalJSX {
@@ -34,9 +44,13 @@ declare namespace LocalJSX {
     }
     interface AppRoot {
     }
+    interface AppWaitingZone {
+        "roomName"?: string;
+    }
     interface IntrinsicElements {
         "app-home": AppHome;
         "app-root": AppRoot;
+        "app-waiting-zone": AppWaitingZone;
     }
 }
 export { LocalJSX as JSX };
@@ -45,6 +59,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
+            "app-waiting-zone": LocalJSX.AppWaitingZone & JSXBase.HTMLAttributes<HTMLAppWaitingZoneElement>;
         }
     }
 }
