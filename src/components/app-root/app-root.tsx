@@ -1,11 +1,11 @@
-import { Component, h } from '@stencil/core';
+import { Component, ComponentInterface, h } from '@stencil/core';
 
 @Component({
   tag: 'app-root',
   styleUrl: 'app-root.css',
   scoped: true,
 })
-export class AppRoot {
+export class AppRoot implements ComponentInterface {
   render() {
     return (
       <ion-app>

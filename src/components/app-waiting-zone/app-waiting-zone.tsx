@@ -1,11 +1,11 @@
-import { Component, Host, h, Prop } from '@stencil/core';
+import { Component, Host, h, Prop, ComponentInterface } from '@stencil/core';
 
 @Component({
   tag: 'app-waiting-zone',
   styleUrl: 'app-waiting-zone.css',
   scoped: true,
 })
-export class AppWaitingZone {
+export class AppWaitingZone implements ComponentInterface {
 
   @Prop() roomName: string;
 

@@ -1,4 +1,4 @@
-import { Component, h, Host, State } from '@stencil/core';
+import { Component, ComponentInterface, h, Host, State } from '@stencil/core';
 import Peer from 'peerjs';
 import { Message } from '../../utils/message';
 
@@ -7,7 +7,7 @@ import { Message } from '../../utils/message';
   styleUrl: 'app-home.css',
   scoped: true,
 })
-export class AppHome {
+export class AppHome implements ComponentInterface {
 
   private readonly peerJSOptions: Peer.PeerJSOption = {
     debug: 3,
