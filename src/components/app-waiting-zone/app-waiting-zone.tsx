@@ -25,7 +25,13 @@ export class AppWaitingZone implements ComponentInterface {
         <ion-content class="ion-padding">
           <ion-list>
             {
-              state.players?.map(({ name, isHost }) => (<ion-item>{`${name}${isHost ? ' (Host)' : ''}`}</ion-item>))
+              state.players?.map(({ name, isHost }, index) => (
+                <ion-item>
+                  <ion-label>{`${name}${isHost ? ' (Host)' : ''}`}</ion-label>
+                  {isHost && <ion-badge color="secondary">Host</ion-badge>}
+                  <ion-badge color="primary">{index + 1}</ion-badge>
+                </ion-item>
+              ))
             }
           </ion-list>
         </ion-content>
