@@ -1,4 +1,4 @@
-import { Component, h, Host } from '@stencil/core';
+import { Component, h, Host, State } from '@stencil/core';
 import Peer from 'peerjs';
 import { Message } from '../../utils/message';
 
@@ -21,12 +21,14 @@ export class AppHome {
   private peer: Peer;
   private peerId: string;
   private hostId: string;
-  private playerName: string;
   private connections: Peer.DataConnection[] = [];
 
   private get isHost() {
     return this.peerId === this.hostId;
   }
+
+  @State() roomName: string;
+  @State() playerName: string;
 
   render() {
     return (
@@ -38,24 +40,62 @@ export class AppHome {
         </ion-header>,
 
         <ion-content class="ion-padding">
-          <ion-button onClick={() => this.createRoom()}>Create Room</ion-button>
-          <ion-button onClick={() => this.joinRoom()}>Join Room</ion-button>
+          <ion-grid>
+            <ion-row>
+              <ion-col></ion-col>
+              <ion-col size="auto">
+                {this.renderMainContent()}
+              </ion-col>
+              <ion-col></ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-content>
       </Host>
     );
   }
 
+  private renderMainContent() {
+    return (
+      <div id="main-content">
+        <ion-item>
+          <ion-label position="stacked">Room Name</ion-label>
+          <ion-input
+            type="text"
+            placeholder="Please enter the room name"
+            value={this.roomName}
+            onIonChange={({ detail }) => this.roomName = detail.value}
+          ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Player Name</ion-label>
+          <ion-input
+            type="text"
+            placeholder="Please enter your player name"
+            value={this.playerName}
+            onIonChange={({ detail }) => this.playerName = detail.value}
+          ></ion-input>
+        </ion-item>
+        <ion-button
+          disabled={!this.roomName || !this.playerName}
+          expand="block"
+          onClick={() => this.createRoom()}
+        >Create Room</ion-button>
+        <ion-button
+          disabled={!this.roomName || !this.playerName}
+          expand="block"
+          onClick={() => this.joinRoom()}
+        >Join Room</ion-button>
+      </div>
+    );
+  }
+
   private createRoom() {
-    const roomName = prompt('Room name?');
-    this.playerName = prompt('Player name?');
-    this.hostId = `mgr-${roomName}`;
+    this.hostId = `mgr-${this.roomName}`;
     this.peer = this.createPeer(this.hostId);
   }
 
   private joinRoom() {
-    const roomName = prompt('Room name?');
-    this.playerName = prompt('Player name?');
-    this.hostId = `mgr-${roomName}`;
+    this.hostId = `mgr-${this.roomName}`;
     this.peer = this.createPeer();
   }
 
