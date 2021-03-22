@@ -1,4 +1,5 @@
 import { Component, Host, h, Prop, ComponentInterface } from '@stencil/core';
+import state from '../../utils/store';
 
 @Component({
   tag: 'app-waiting-zone',
@@ -22,7 +23,11 @@ export class AppWaitingZone implements ComponentInterface {
         </ion-header>
 
         <ion-content class="ion-padding">
-
+          <ion-list>
+            {
+              state.players?.map(({ name, isHost }) => (<ion-item>{`${name}${isHost ? ' (Host)' : ''}`}</ion-item>))
+            }
+          </ion-list>
         </ion-content>
       </Host>
     );

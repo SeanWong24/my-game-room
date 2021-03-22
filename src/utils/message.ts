@@ -1,5 +1,5 @@
 export interface Message {
-    type: 'chat';
+    type: 'chat' | 'update-player-list';
     player?: string;
-    content?: string;
+    content?: any;
 }

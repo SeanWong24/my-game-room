@@ -1,6 +1,7 @@
 import { Component, ComponentInterface, h, Host, State } from '@stencil/core';
 import Peer from 'peerjs';
 import { Message } from '../../utils/message';
+import state from '../../utils/store';
 
 @Component({
   tag: 'app-home',
@@ -18,13 +19,9 @@ export class AppHome implements ComponentInterface {
     }
   };
 
-  private peer: Peer;
-  private peerId: string;
-  private hostId: string;
-  private connections: Peer.DataConnection[] = [];
 
   private get isHost() {
-    return this.peerId === this.hostId;
+    return state.peerId === state.hostId;
   }
 
   @State() roomName: string;
@@ -90,13 +87,13 @@ export class AppHome implements ComponentInterface {
   }
 
   private createRoom() {
-    this.hostId = `mgr-${this.roomName}`;
-    this.peer = this.createPeer(this.hostId);
+    state.hostId = `mgr-${this.roomName}`;
+    state.peer = this.createPeer(state.hostId);
   }
 
   private joinRoom() {
-    this.hostId = `mgr-${this.roomName}`;
-    this.peer = this.createPeer();
+    state.hostId = `mgr-${this.roomName}`;
+    state.peer = this.createPeer();
   }
 
   private createPeer(peerId?: string) {
@@ -105,11 +102,17 @@ export class AppHome implements ComponentInterface {
       'open',
       id => {
         console.log('Peer opened.')
-        this.peerId = id;
+        state.peerId = id;
         if (this.isHost) {
+          state.players = [
+            {
+              name: this.playerName,
+              isHost: true
+            }
+          ];
           this.navigateToWaitingZone();
         } else {
-          const connection = this.peer.connect(this.hostId, { label: this.playerName });
+          const connection = state.peer.connect(state.hostId, { label: this.playerName });
           connection.on(
             'open',
             () => {
@@ -127,7 +130,7 @@ export class AppHome implements ComponentInterface {
               this.handleMessage(message, connection);
             }
           );
-          this.connections.push(connection);
+          state.connections.push(connection);
         }
       }
     );
@@ -135,7 +138,7 @@ export class AppHome implements ComponentInterface {
       'error',
       error => {
         if (error.type === 'unavailable-id') {
-          this.hostId = undefined;
+          state.hostId = undefined;
           alert('You cannot use this room name.');
         } else {
           alert(error.type);
@@ -146,17 +149,17 @@ export class AppHome implements ComponentInterface {
       'connection',
       connection => {
         console.log(`${connection.label} connected.`);
-        this.connections.push(connection);
+        state.connections.push(connection);
         if (this.isHost) {
           connection.on(
             'open',
             () => {
+              state.players = [...state.players, { name: connection.label, isHost: false }];
               const message = {
-                type: 'chat',
-                player: connection.label,
-                content: 'hi'
+                type: 'update-player-list',
+                content: state.players
               } as Message;
-              for (const conn of this.connections) {
+              for (const conn of state.connections) {
                 conn.send(JSON.stringify(message));
               }
             }
@@ -180,10 +183,14 @@ export class AppHome implements ComponentInterface {
       case 'chat':
         console.log(`${message.player}: ${message.content}`);
         if (this.isHost) {
-          for (const conn of this.connections) {
+          for (const conn of state.connections) {
             conn.send(JSON.stringify(message));
           }
         }
+        break;
+      case 'update-player-list':
+        state.players = message.content;
+        break;
     }
   }
 
