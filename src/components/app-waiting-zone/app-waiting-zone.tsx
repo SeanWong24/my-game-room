@@ -82,7 +82,18 @@ export class AppWaitingZone implements ComponentInterface {
                 <ion-content>
                   <ion-list>
                     {
-                      this.chatMassages?.map(message => (
+                      !(this.chatMassages?.length > 0) &&
+                      <ion-card>
+                        <ion-card-header>
+                          <ion-card-title>No Message Yet</ion-card-title>
+                        </ion-card-header>
+                        <ion-card-content>
+                          Sending a message to start the chat
+                        </ion-card-content>
+                      </ion-card>
+                    }
+                    {
+                      this.chatMassages?.length > 0 && this.chatMassages.map(message => (
                         <ion-card>
                           <ion-card-header>
                             <ion-card-subtitle>{message.player}</ion-card-subtitle>
