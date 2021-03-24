@@ -1,6 +1,6 @@
 import { Component, ComponentInterface, h, Host, State } from '@stencil/core';
 import Peer from 'peerjs';
-import { Message } from '../../utils/message';
+import { ChatMessage, Message } from '../../utils/message';
 import state from '../../utils/store';
 
 @Component({
@@ -25,7 +25,6 @@ export class AppHome implements ComponentInterface {
   }
 
   @State() roomName: string;
-  @State() playerName: string;
 
   render() {
     return (
@@ -68,17 +67,17 @@ export class AppHome implements ComponentInterface {
           <ion-input
             type="text"
             placeholder="Please enter your player name"
-            value={this.playerName}
-            onIonChange={({ detail }) => this.playerName = detail.value}
+            value={state.playerName}
+            onIonChange={({ detail }) => state.playerName = detail.value}
           ></ion-input>
         </ion-item>
         <ion-button
-          disabled={!this.roomName || !this.playerName}
+          disabled={!this.roomName || !state.playerName}
           expand="block"
           onClick={() => this.createRoom()}
         >Create Room</ion-button>
         <ion-button
-          disabled={!this.roomName || !this.playerName}
+          disabled={!this.roomName || !state.playerName}
           expand="block"
           onClick={() => this.joinRoom()}
         >Join Room</ion-button>
@@ -106,13 +105,13 @@ export class AppHome implements ComponentInterface {
         if (this.isHost) {
           state.players = [
             {
-              name: this.playerName,
+              name: state.playerName,
               isHost: true
             }
           ];
           this.navigateToWaitingZone();
         } else {
-          const connection = state.peer.connect(state.hostId, { label: this.playerName });
+          const connection = state.peer.connect(state.hostId, { label: state.playerName });
           connection.on(
             'open',
             () => {
@@ -182,6 +181,7 @@ export class AppHome implements ComponentInterface {
     switch (message.type) {
       case 'chat':
         console.log(`${message.player}: ${message.content}`);
+        state?.displayChatMessageHandler(message as ChatMessage);
         if (this.isHost) {
           for (const conn of state.connections) {
             conn.send(JSON.stringify(message));

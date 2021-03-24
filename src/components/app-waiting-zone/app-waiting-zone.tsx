@@ -1,4 +1,5 @@
 import { Component, Host, h, Prop, ComponentInterface, State } from '@stencil/core';
+import { ChatMessage, Message } from '../../utils/message';
 import state from '../../utils/store';
 
 @Component({
@@ -8,9 +9,19 @@ import state from '../../utils/store';
 })
 export class AppWaitingZone implements ComponentInterface {
 
+  private get isHost() {
+    return state.peerId === state.hostId;
+  }
+
   @State() viewSelection: string = 'chats';
+  @State() chatMessageToBeSent: string;
+  @State() chatMassages: ChatMessage[] = [];
 
   @Prop() roomName: string;
+
+  connectedCallback() {
+    state.displayChatMessageHandler = message => this.displayChatMessage(message);
+  }
 
   render() {
     return (
@@ -70,30 +81,18 @@ export class AppWaitingZone implements ComponentInterface {
               <ion-col>
                 <ion-content>
                   <ion-list>
-                    <ion-card>
-                      <ion-card-header>
-                        <ion-card-subtitle>Mock Player 1</ion-card-subtitle>
-                      </ion-card-header>
-                      <ion-card-content>
-                        Hi!
-                      </ion-card-content>
-                    </ion-card>
-                    <ion-card>
-                      <ion-card-header>
-                        <ion-card-subtitle>Mock Player 2</ion-card-subtitle>
-                      </ion-card-header>
-                      <ion-card-content>
-                        Hello!
-                      </ion-card-content>
-                    </ion-card>
-                    <ion-card>
-                      <ion-card-header>
-                        <ion-card-subtitle>Mock Player 1</ion-card-subtitle>
-                      </ion-card-header>
-                      <ion-card-content>
-                        Hey!
-                      </ion-card-content>
-                    </ion-card>
+                    {
+                      this.chatMassages?.map(message => (
+                        <ion-card>
+                          <ion-card-header>
+                            <ion-card-subtitle>{message.player}</ion-card-subtitle>
+                          </ion-card-header>
+                          <ion-card-content>
+                            {message.content}
+                          </ion-card-content>
+                        </ion-card>
+                      ))
+                    }
                   </ion-list>
                 </ion-content>
               </ion-col>
@@ -101,8 +100,12 @@ export class AppWaitingZone implements ComponentInterface {
             <ion-row>
               <ion-col>
                 <ion-item>
-                  <ion-input placeholder="Enter your message here..."></ion-input>
-                  <ion-button slot="end" fill="clear">
+                  <ion-input
+                    placeholder="Enter your message here..."
+                    value={this.chatMessageToBeSent}
+                    onIonChange={({ detail }) => this.chatMessageToBeSent = detail.value}
+                  ></ion-input>
+                  <ion-button slot="end" fill="clear" onClick={() => this.sendChatMessage()}>
                     <ion-icon slot="icon-only" name="send"></ion-icon>
                   </ion-button>
                 </ion-item>
@@ -145,6 +148,26 @@ export class AppWaitingZone implements ComponentInterface {
           </ion-content>
         );
     }
+  }
+
+  private displayChatMessage(message: ChatMessage) {
+    this.chatMassages = [...this.chatMassages, message];
+  }
+
+  private sendChatMessage() {
+    // TODO maybe use a general method to send messages
+    const message = {
+      type: 'chat',
+      player: state.playerName,
+      content: this.chatMessageToBeSent
+    } as Message;
+    for (const connection of state.connections) {
+      connection.send(JSON.stringify(message));
+    }
+    if (this.isHost) {
+      this.displayChatMessage(message as ChatMessage);
+    }
+    this.chatMessageToBeSent = undefined;
   }
 
 }
