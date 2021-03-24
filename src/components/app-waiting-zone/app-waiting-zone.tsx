@@ -64,9 +64,86 @@ export class AppWaitingZone implements ComponentInterface {
   private renderMainView() {
     switch (this.viewSelection) {
       case 'chats':
-        return <div>Chat View</div>;
+        return (
+          <ion-grid style={{ height: 'calc(100% - 50px)' }}>
+            <ion-row style={{ height: 'calc(100% - 50px)' }}>
+              <ion-col>
+                <ion-content>
+                  <ion-list>
+                    <ion-card>
+                      <ion-card-header>
+                        <ion-card-subtitle>Mock Player 1</ion-card-subtitle>
+                      </ion-card-header>
+                      <ion-card-content>
+                        Hi!
+                      </ion-card-content>
+                    </ion-card>
+                    <ion-card>
+                      <ion-card-header>
+                        <ion-card-subtitle>Mock Player 2</ion-card-subtitle>
+                      </ion-card-header>
+                      <ion-card-content>
+                        Hello!
+                      </ion-card-content>
+                    </ion-card>
+                    <ion-card>
+                      <ion-card-header>
+                        <ion-card-subtitle>Mock Player 1</ion-card-subtitle>
+                      </ion-card-header>
+                      <ion-card-content>
+                        Hey!
+                      </ion-card-content>
+                    </ion-card>
+                  </ion-list>
+                </ion-content>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-input placeholder="Enter your message here..."></ion-input>
+                  <ion-button slot="end" fill="clear">
+                    <ion-icon slot="icon-only" name="send"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        );
       case 'games':
-        return <div>Game List</div>;
+        return (
+          <ion-content style={{ height: 'calc(100% - 50px)' }}>
+            <ion-list>
+              <ion-card button>
+                <ion-card-header>
+                  <ion-card-title>Mock Game 1</ion-card-title>
+                  <ion-card-subtitle>2 - 5 players</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  Mock discription...
+                </ion-card-content>
+              </ion-card>
+              <ion-card button>
+                <ion-card-header>
+                  <ion-card-title>Mock Game 2</ion-card-title>
+                  <ion-card-subtitle>3 - 5 players</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  Mock discription...
+                </ion-card-content>
+              </ion-card>
+              <ion-card button>
+                <ion-card-header>
+                  <ion-card-title>Mock Game 3</ion-card-title>
+                  <ion-card-subtitle>3 - 9 players</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  Mock discription...
+                </ion-card-content>
+              </ion-card>
+            </ion-list>
+          </ion-content>
+        );
     }
   }
 
