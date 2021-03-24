@@ -191,6 +191,34 @@ export class AppHome implements ComponentInterface {
       case 'update-player-list':
         state.players = message.content;
         break;
+      case 'vote-game':
+        if (this.isHost) {
+          const gameName = message.content;
+          const player = message.player;
+          const previousPlayerList = Object.values(state.votedGameNameAndPlayerNamesDict).find(playerList => playerList.find(p => p === player));
+          previousPlayerList?.splice(previousPlayerList.indexOf(player), 1);
+          let newPlayerList = state.votedGameNameAndPlayerNamesDict[gameName];
+          if (!newPlayerList) {
+            state.votedGameNameAndPlayerNamesDict[gameName] = [];
+            newPlayerList = state.votedGameNameAndPlayerNamesDict[gameName];
+          }
+          newPlayerList.push(player);
+          state.votedGameNameAndPlayerNamesDict = Object.assign({}, state.votedGameNameAndPlayerNamesDict);
+
+          const messageOut = {
+            type: 'update-voted-game-list',
+            content: state.votedGameNameAndPlayerNamesDict
+          } as Message;
+          for (const connection of state.connections) {
+            connection.send(JSON.stringify(messageOut));
+          }
+        }
+        break;
+      case 'update-voted-game-list':
+        if (!this.isHost) {
+          state.votedGameNameAndPlayerNamesDict = message.content;
+        }
+        break;
     }
   }
 

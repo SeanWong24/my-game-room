@@ -128,31 +128,24 @@ export class AppWaitingZone implements ComponentInterface {
         return (
           <ion-content style={{ height: 'calc(100% - 50px)' }}>
             <ion-list>
-              <ion-card button>
+              <ion-card button onClick={() => this.sendGameVoting('Who\'s the Spy?')}>
                 <ion-card-header>
-                  <ion-card-title>Mock Game 1</ion-card-title>
-                  <ion-card-subtitle>2 - 5 players</ion-card-subtitle>
+                  <ion-card-title>Who's the Spy?</ion-card-title>
+                  {state.votedGameNameAndPlayerNamesDict['Who\'s the Spy?']?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
+                  <ion-card-subtitle>3 - 20 players</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
-                  Mock discription...
+                  Some discription...
                 </ion-card-content>
               </ion-card>
-              <ion-card button>
+              <ion-card button onClick={() => this.sendGameVoting('Codenames')}>
                 <ion-card-header>
-                  <ion-card-title>Mock Game 2</ion-card-title>
-                  <ion-card-subtitle>3 - 5 players</ion-card-subtitle>
+                  <ion-card-title>Codenames</ion-card-title>
+                  {state.votedGameNameAndPlayerNamesDict['Codenames']?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
+                  <ion-card-subtitle>4 - 8 players</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
-                  Mock discription...
-                </ion-card-content>
-              </ion-card>
-              <ion-card button>
-                <ion-card-header>
-                  <ion-card-title>Mock Game 3</ion-card-title>
-                  <ion-card-subtitle>3 - 9 players</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
-                  Mock discription...
+                  Some discription...
                 </ion-card-content>
               </ion-card>
             </ion-list>
@@ -179,6 +172,38 @@ export class AppWaitingZone implements ComponentInterface {
       this.displayChatMessage(message as ChatMessage);
     }
     this.chatMessageToBeSent = undefined;
+  }
+
+  private sendGameVoting(gameName: string) {
+    if (this.isHost) {
+      // TODO could be repeated codes 
+      const previousPlayerList = Object.values(state.votedGameNameAndPlayerNamesDict).find(playerList => playerList.find(p => p === state.playerName));
+      previousPlayerList?.splice(previousPlayerList.indexOf(state.playerName), 1);
+      let newPlayerList = state.votedGameNameAndPlayerNamesDict[gameName];
+      if (!newPlayerList) {
+        state.votedGameNameAndPlayerNamesDict[gameName] = [];
+        newPlayerList = state.votedGameNameAndPlayerNamesDict[gameName];
+      }
+      newPlayerList.push(state.playerName);
+      state.votedGameNameAndPlayerNamesDict = Object.assign({}, state.votedGameNameAndPlayerNamesDict);
+
+      const messageOut = {
+        type: 'update-voted-game-list',
+        content: state.votedGameNameAndPlayerNamesDict
+      } as Message;
+      for (const connection of state.connections) {
+        connection.send(JSON.stringify(messageOut));
+      }
+    } else {
+      const message = {
+        type: 'vote-game',
+        player: state.playerName,
+        content: gameName
+      } as Message;
+      for (const connection of state.connections) {
+        connection.send(JSON.stringify(message));
+      }
+    }
   }
 
 }

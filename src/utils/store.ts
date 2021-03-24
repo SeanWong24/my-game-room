@@ -4,7 +4,8 @@ import { ChatMessage } from "./message";
 
 const { state } = createStore({
     connections: [],
-    players: []
+    players: [],
+    votedGameNameAndPlayerNamesDict: {}
 });
 
 export default state as {
@@ -15,4 +16,5 @@ export default state as {
     connections: Peer.DataConnection[],
     players: { name: string, isHost: boolean }[];
     displayChatMessageHandler: (message: ChatMessage) => void;
+    votedGameNameAndPlayerNamesDict: { [gameName: string]: string[] };
 };
