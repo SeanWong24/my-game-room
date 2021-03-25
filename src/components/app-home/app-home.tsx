@@ -111,7 +111,7 @@ export class AppHome implements ComponentInterface {
           ];
           this.navigateToWaitingZone();
         } else {
-          const connection = state.peer.connect(state.hostId, { label: state.playerName });
+          const connection = state.peer.connect(state.hostId, { label: state.playerName, serialization: 'json' });
           connection.on(
             'open',
             () => {
@@ -125,7 +125,7 @@ export class AppHome implements ComponentInterface {
           connection.on(
             'data',
             data => {
-              const message = JSON.parse(data) as Message;
+              const message = data as Message;
               this.handleMessage(message, connection);
             }
           );
@@ -159,7 +159,7 @@ export class AppHome implements ComponentInterface {
                 content: state.players
               } as Message;
               for (const conn of state.connections) {
-                conn.send(JSON.stringify(message));
+                conn.send(message);
               }
             }
           );
@@ -167,7 +167,7 @@ export class AppHome implements ComponentInterface {
         connection.on(
           'data',
           data => {
-            const message = JSON.parse(data) as Message;
+            const message = data as Message;
             this.handleMessage(message, connection);
           }
         );
@@ -184,7 +184,7 @@ export class AppHome implements ComponentInterface {
         state?.displayChatMessageHandler(message as ChatMessage);
         if (this.isHost) {
           for (const conn of state.connections) {
-            conn.send(JSON.stringify(message));
+            conn.send(message);
           }
         }
         break;
@@ -210,7 +210,7 @@ export class AppHome implements ComponentInterface {
             content: state.votedGameNameAndPlayerNamesDict
           } as Message;
           for (const connection of state.connections) {
-            connection.send(JSON.stringify(messageOut));
+            connection.send(messageOut);
           }
         }
         break;

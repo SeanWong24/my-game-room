@@ -166,7 +166,7 @@ export class AppWaitingZone implements ComponentInterface {
       content: this.chatMessageToBeSent
     } as Message;
     for (const connection of state.connections) {
-      connection.send(JSON.stringify(message));
+      connection.send(message);
     }
     if (this.isHost) {
       this.displayChatMessage(message as ChatMessage);
@@ -192,7 +192,7 @@ export class AppWaitingZone implements ComponentInterface {
         content: state.votedGameNameAndPlayerNamesDict
       } as Message;
       for (const connection of state.connections) {
-        connection.send(JSON.stringify(messageOut));
+        connection.send(messageOut);
       }
     } else {
       const message = {
@@ -201,7 +201,7 @@ export class AppWaitingZone implements ComponentInterface {
         content: gameName
       } as Message;
       for (const connection of state.connections) {
-        connection.send(JSON.stringify(message));
+        connection.send(message);
       }
     }
   }
