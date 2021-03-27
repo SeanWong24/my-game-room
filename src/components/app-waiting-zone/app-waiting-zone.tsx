@@ -1,3 +1,4 @@
+import { alertController } from '@ionic/core';
 import { Component, Host, h, Prop, ComponentInterface, State } from '@stencil/core';
 import { ChatMessage, Message } from '../../utils/message';
 import state from '../../utils/store';
@@ -33,6 +34,12 @@ export class AppWaitingZone implements ComponentInterface {
             </ion-buttons>
             <ion-title>{this.roomName} - {state.players.length} player(s)</ion-title>
             <ion-buttons slot="end">
+              {
+                this.isHost &&
+                <ion-button title="Start game" onClick={() => this.startGame()}>
+                  <ion-icon slot="icon-only" name="play"></ion-icon>
+                </ion-button>
+              }
               <ion-menu-toggle>
                 <ion-button title="Player List">
                   <ion-icon slot="icon-only" name="people"></ion-icon>
@@ -128,10 +135,10 @@ export class AppWaitingZone implements ComponentInterface {
         return (
           <ion-content style={{ height: 'calc(100% - 50px)' }}>
             <ion-list>
-              <ion-card button onClick={() => this.sendGameVoting('Who\'s the Spy?')}>
+              <ion-card button onClick={() => this.sendGameVoting('Who is the Spy?')}>
                 <ion-card-header>
                   <ion-card-title>Who's the Spy?</ion-card-title>
-                  {state.votedGameNameAndPlayerNamesDict['Who\'s the Spy?']?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
+                  {state.votedGameNameAndPlayerNamesDict['Who is the Spy?']?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
                   <ion-card-subtitle>3 - 20 players</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
@@ -204,6 +211,35 @@ export class AppWaitingZone implements ComponentInterface {
         connection.send(message);
       }
     }
+  }
+
+  private async startGame() {
+    const gameVotes = Object.entries(state.votedGameNameAndPlayerNamesDict).map(([gameName, players]) => ({ gameName, voteCount: players.length }));
+    const highestVotedGame = gameVotes?.sort((a, b) => b.voteCount - a.voteCount)[0];
+
+    const router = document.querySelector('ion-router');
+    const alert = await alertController.create({
+      header: 'Starting game...',
+      message: `Your are going to start ${highestVotedGame.gameName}. Are you sure?`,
+      buttons: [
+        {
+          text: 'Yep',
+          handler: () => {
+            debugger
+            switch (highestVotedGame.gameName) {
+              case 'Who is the Spy?':
+                router.push(`/room/${this.roomName}/who-is-the-spy`);
+                break;
+              case 'Codenames':
+                router.push(`/room/${this.roomName}/codenames`);
+                break;
+            }
+          }
+        },
+        'Nay'
+      ]
+    });
+    await alert.present();
   }
 
 }

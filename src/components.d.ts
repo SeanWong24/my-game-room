@@ -6,6 +6,10 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface AppGameCodenames {
+    }
+    interface AppGameWhoIsTheSpy {
+    }
     interface AppHome {
     }
     interface AppRoot {
@@ -15,6 +19,18 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLAppGameCodenamesElement extends Components.AppGameCodenames, HTMLStencilElement {
+    }
+    var HTMLAppGameCodenamesElement: {
+        prototype: HTMLAppGameCodenamesElement;
+        new (): HTMLAppGameCodenamesElement;
+    };
+    interface HTMLAppGameWhoIsTheSpyElement extends Components.AppGameWhoIsTheSpy, HTMLStencilElement {
+    }
+    var HTMLAppGameWhoIsTheSpyElement: {
+        prototype: HTMLAppGameWhoIsTheSpyElement;
+        new (): HTMLAppGameWhoIsTheSpyElement;
+    };
     interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
     }
     var HTMLAppHomeElement: {
@@ -34,12 +50,18 @@ declare global {
         new (): HTMLAppWaitingZoneElement;
     };
     interface HTMLElementTagNameMap {
+        "app-game-codenames": HTMLAppGameCodenamesElement;
+        "app-game-who-is-the-spy": HTMLAppGameWhoIsTheSpyElement;
         "app-home": HTMLAppHomeElement;
         "app-root": HTMLAppRootElement;
         "app-waiting-zone": HTMLAppWaitingZoneElement;
     }
 }
 declare namespace LocalJSX {
+    interface AppGameCodenames {
+    }
+    interface AppGameWhoIsTheSpy {
+    }
     interface AppHome {
     }
     interface AppRoot {
@@ -48,6 +70,8 @@ declare namespace LocalJSX {
         "roomName"?: string;
     }
     interface IntrinsicElements {
+        "app-game-codenames": AppGameCodenames;
+        "app-game-who-is-the-spy": AppGameWhoIsTheSpy;
         "app-home": AppHome;
         "app-root": AppRoot;
         "app-waiting-zone": AppWaitingZone;
@@ -57,6 +81,8 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "app-game-codenames": LocalJSX.AppGameCodenames & JSXBase.HTMLAttributes<HTMLAppGameCodenamesElement>;
+            "app-game-who-is-the-spy": LocalJSX.AppGameWhoIsTheSpy & JSXBase.HTMLAttributes<HTMLAppGameWhoIsTheSpyElement>;
             "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
             "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "app-waiting-zone": LocalJSX.AppWaitingZone & JSXBase.HTMLAttributes<HTMLAppWaitingZoneElement>;
