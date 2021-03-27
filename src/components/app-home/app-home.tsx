@@ -219,6 +219,12 @@ export class AppHome implements ComponentInterface {
           state.votedGameNameAndPlayerNamesDict = message.content;
         }
         break;
+      case 'update-game-selection':
+        if (!this.isHost) {
+          const router = document.querySelector('ion-router');
+          router.push(`/room/${this.roomName}/${message.content}`);
+        }
+        break;
     }
   }
 

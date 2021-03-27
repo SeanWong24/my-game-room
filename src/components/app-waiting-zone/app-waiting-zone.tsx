@@ -222,6 +222,14 @@ export class AppWaitingZone implements ComponentInterface {
           text: 'Yep',
           handler: () => {
             router.push(`/room/${this.roomName}/${votedGame.name}`);
+            
+            const message = {
+              type: 'update-game-selection',
+              content: votedGame.name
+            } as Message;
+            for (const connection of state.connections) {
+              connection.send(message);
+            }
           }
         },
         'Nay'
