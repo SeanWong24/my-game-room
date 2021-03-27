@@ -1,5 +1,6 @@
 import { alertController } from '@ionic/core';
 import { Component, Host, h, Prop, ComponentInterface, State } from '@stencil/core';
+import { games } from '../../utils/games';
 import { ChatMessage, Message } from '../../utils/message';
 import state from '../../utils/store';
 
@@ -135,26 +136,20 @@ export class AppWaitingZone implements ComponentInterface {
         return (
           <ion-content style={{ height: 'calc(100% - 50px)' }}>
             <ion-list>
-              <ion-card button onClick={() => this.sendGameVoting('Who is the Spy?')}>
-                <ion-card-header>
-                  <ion-card-title>Who's the Spy?</ion-card-title>
-                  {state.votedGameNameAndPlayerNamesDict['Who is the Spy?']?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
-                  <ion-card-subtitle>3 - 20 players</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
-                  Some discription...
-                </ion-card-content>
-              </ion-card>
-              <ion-card button onClick={() => this.sendGameVoting('Codenames')}>
-                <ion-card-header>
-                  <ion-card-title>Codenames</ion-card-title>
-                  {state.votedGameNameAndPlayerNamesDict['Codenames']?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
-                  <ion-card-subtitle>4 - 8 players</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
-                  Some discription...
-                </ion-card-content>
-              </ion-card>
+              {
+                games.map(game => (
+                  <ion-card button onClick={() => this.sendGameVoting(game.name)}>
+                    <ion-card-header>
+                      <ion-card-title>{game.displayName}</ion-card-title>
+                      {state.votedGameNameAndPlayerNamesDict[game.name]?.map(playerName => <ion-badge>{playerName}</ion-badge>)}
+                      <ion-card-subtitle>{game.minPlayers} - {game.maxPlayers} players</ion-card-subtitle>
+                    </ion-card-header>
+                    <ion-card-content>
+                      {game.description}
+                    </ion-card-content>
+                  </ion-card>
+                ))
+              }
             </ion-list>
           </ion-content>
         );
@@ -215,25 +210,18 @@ export class AppWaitingZone implements ComponentInterface {
 
   private async startGame() {
     const gameVotes = Object.entries(state.votedGameNameAndPlayerNamesDict).map(([gameName, players]) => ({ gameName, voteCount: players.length }));
-    const highestVotedGame = gameVotes?.sort((a, b) => b.voteCount - a.voteCount)[0];
+    const highestGameVote = gameVotes?.sort((a, b) => b.voteCount - a.voteCount)[0];
+    const votedGame = games.find(game => game.name === highestGameVote.gameName);
 
     const router = document.querySelector('ion-router');
     const alert = await alertController.create({
       header: 'Starting game...',
-      message: `Your are going to start ${highestVotedGame.gameName}. Are you sure?`,
+      message: `Your are going to start ${votedGame.displayName}. Are you sure?`,
       buttons: [
         {
           text: 'Yep',
           handler: () => {
-            debugger
-            switch (highestVotedGame.gameName) {
-              case 'Who is the Spy?':
-                router.push(`/room/${this.roomName}/who-is-the-spy`);
-                break;
-              case 'Codenames':
-                router.push(`/room/${this.roomName}/codenames`);
-                break;
-            }
+            router.push(`/room/${this.roomName}/${votedGame.name}`);
           }
         },
         'Nay'
