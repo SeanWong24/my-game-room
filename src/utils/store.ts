@@ -1,6 +1,6 @@
 import { createStore } from "@stencil/store";
 import Peer from "peerjs";
-import { ChatMessage } from "./message";
+import { ChatMessage, Message } from "./message";
 
 const { state } = createStore({
     connections: [],
@@ -17,4 +17,5 @@ export default state as {
     players: { name: string, isHost: boolean }[];
     displayChatMessageHandler: (message: ChatMessage) => void;
     votedGameNameAndPlayerNamesDict: { [gameName: string]: string[] };
+    activeGameMessageHandler: (message: Message) => void;
 };

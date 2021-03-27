@@ -225,6 +225,16 @@ export class AppHome implements ComponentInterface {
           router.push(`/room/${this.roomName}/${message.content}`);
         }
         break;
+      case 'game-action':
+        if (this.isHost) {
+          state.activeGameMessageHandler?.(message);
+        }
+        break;
+      case 'update-game-status':
+        if (!this.isHost) {
+          state.activeGameMessageHandler?.(message);
+        }
+        break;
     }
   }
 
