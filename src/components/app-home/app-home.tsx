@@ -1,7 +1,7 @@
 import { Component, ComponentInterface, h, Host, State } from '@stencil/core';
 import Peer from 'peerjs';
 import { ChatMessage, Message } from '../../utils/message';
-import state from '../../utils/store';
+import { state } from '../../utils/store';
 
 @Component({
   tag: 'app-home',

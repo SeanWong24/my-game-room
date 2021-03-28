@@ -2,13 +2,7 @@ import { createStore } from "@stencil/store";
 import Peer from "peerjs";
 import { ChatMessage, Message } from "./message";
 
-const { state } = createStore({
-    connections: [],
-    players: [],
-    votedGameNameAndPlayerNamesDict: {}
-});
-
-export default state as {
+declare type StoreState = {
     peer: Peer,
     peerId: string,
     hostId: string,
@@ -19,3 +13,11 @@ export default state as {
     votedGameNameAndPlayerNamesDict: { [gameName: string]: string[] };
     activeGameMessageHandler: (message: Message) => void;
 };
+
+const { state, onChange: onStoreStateChange } = createStore({
+    connections: [],
+    players: [],
+    votedGameNameAndPlayerNamesDict: {}
+} as StoreState);
+
+export { state, onStoreStateChange };

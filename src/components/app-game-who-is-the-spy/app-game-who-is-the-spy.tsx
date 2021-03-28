@@ -1,6 +1,6 @@
 import { Component, Host, h, ComponentInterface } from '@stencil/core';
 import { Message } from '../../utils/message';
-import state from '../../utils/store';
+import { state } from '../../utils/store';
 
 @Component({
   tag: 'app-game-who-is-the-spy',

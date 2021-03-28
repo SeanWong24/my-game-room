@@ -1,8 +1,8 @@
 import { alertController } from '@ionic/core';
-import { Component, Host, h, Prop, ComponentInterface, State } from '@stencil/core';
+import { Component, Host, h, Prop, ComponentInterface, State, Watch } from '@stencil/core';
 import { games } from '../../utils/games';
 import { ChatMessage, Message } from '../../utils/message';
-import state from '../../utils/store';
+import { onStoreStateChange, state } from '../../utils/store';
 
 @Component({
   tag: 'app-waiting-zone',
@@ -18,11 +18,30 @@ export class AppWaitingZone implements ComponentInterface {
   @State() viewSelection: string = 'chats';
   @State() chatMessageToBeSent: string;
   @State() chatMassages: ChatMessage[] = [];
+  @State() hasUnssenChat: boolean = false;
+  @State() hasUnseenVote: boolean = false;
 
   @Prop() roomName: string;
 
+  @Watch('viewSelection')
+  viewSelectionChanged(newValue: string) {
+    switch (newValue) {
+      case 'chats':
+        this.hasUnssenChat = false;
+        break;
+      case 'games':
+        this.hasUnseenVote = false;
+        break;
+    }
+  }
+
   connectedCallback() {
     state.displayChatMessageHandler = message => this.displayChatMessage(message);
+    onStoreStateChange('votedGameNameAndPlayerNamesDict', () => {
+      if (this.viewSelection !== 'games') {
+        this.hasUnseenVote = true;
+      }
+    });
   }
 
   render() {
@@ -67,10 +86,16 @@ export class AppWaitingZone implements ComponentInterface {
           <ion-content id="main-view-container" class="ion-padding">
             <ion-segment value={this.viewSelection} onIonChange={({ detail }) => this.viewSelection = detail.value}>
               <ion-segment-button value="chats">
-                <ion-label>Chats</ion-label>
+                <ion-label>
+                  Chats
+                  {this.hasUnssenChat && <ion-badge color="danger"> </ion-badge>}
+                </ion-label>
               </ion-segment-button>
               <ion-segment-button value="games">
-                <ion-label>Games</ion-label>
+                <ion-label>
+                  Games
+                  {this.hasUnseenVote && <ion-badge color="danger"> </ion-badge>}
+                </ion-label>
               </ion-segment-button>
             </ion-segment>
             {this.renderMainView()}
@@ -158,6 +183,9 @@ export class AppWaitingZone implements ComponentInterface {
 
   private displayChatMessage(message: ChatMessage) {
     this.chatMassages = [...this.chatMassages, message];
+    if (this.viewSelection !== 'chats') {
+      this.hasUnssenChat = true;
+    }
   }
 
   private sendChatMessage() {
@@ -222,7 +250,7 @@ export class AppWaitingZone implements ComponentInterface {
           text: 'Yep',
           handler: () => {
             router.push(`/room/${this.roomName}/${votedGame.name}`);
-            
+
             const message = {
               type: 'update-game-selection',
               content: votedGame.name
