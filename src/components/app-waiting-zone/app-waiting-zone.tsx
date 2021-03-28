@@ -246,6 +246,7 @@ export class AppWaitingZone implements ComponentInterface {
       header: 'Starting game...',
       message: `Your are going to start ${votedGame.displayName}. Are you sure?`,
       buttons: [
+        'Nay',
         {
           text: 'Yep',
           handler: () => {
@@ -259,8 +260,7 @@ export class AppWaitingZone implements ComponentInterface {
               connection.send(message);
             }
           }
-        },
-        'Nay'
+        }
       ]
     });
     await alert.present();
