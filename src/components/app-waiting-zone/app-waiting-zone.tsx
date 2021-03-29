@@ -83,7 +83,7 @@ export class AppWaitingZone implements ComponentInterface {
               }
             </ion-list>
           </ion-menu>
-          <ion-content id="main-view-container" class="ion-padding">
+          <ion-content id="main-view-container" class="ion-padding" scrollY={false}>
             <ion-segment value={this.viewSelection} onIonChange={({ detail }) => this.viewSelection = detail.value}>
               <ion-segment-button value="chats">
                 <ion-label>
